@@ -24,12 +24,14 @@
 // (as long as there are two projects with equal number of milestones, we can "ping-pong" between them so exhaust
 // all milestones)
 // if we stored the sorted milestones in `sorted` then the total number of weeks would be
-// then we can exhaust all milestones in the range (2:end) and we for the maximal two milestone projects
-// we can exhaust 2*sorted(1) milestones.  In other words, the total number of weeks is
-// total = Sum(sorted(2:end)) + 2*sorted(1)
-// however, we would not like to sort this as this would cost O(n logn), so we can rewrite this as
-// total = sum(milestones) - max(milestones) + 2*second_max(milestones)
-// using this equation, we can solve in O(n) time
+// then we can exhaust all milestones in the range (1:end).
+// For the project with the maximal number of milestones, we can exhaust either all of them,
+// or 2*sum(sorted(1:end)) +1 of them (we could interleave the maximal project in every other week).
+// In other words, the total number of weeks is
+// total = sum(milestones) 
+// or
+// total = 2 * (sum(milestones) - max) +1
+// dependeing on the difference between max and sum(sorted(1:end))
 // 
 
 #include <algorithm>
@@ -39,10 +41,14 @@
 class Solution {
 public:
     long long numberOfWeeks(vector<int>& milestones) {
-// TODO: new solution
-
-        
+        long long max = *std::max_element(std::cbegin(milestones), std::cend(milestones));
+        long long sum = std::reduce(std::cbegin(milestones), std::cend(milestones), 0ll);
+        // we can fully exhaust max if sum(sorted(1:n)) + 1 >= max and sum(sorted(1:n)) = sum - max
+        if (sum+1 >= 2* max) { return sum;}
+        // otherwise we cannot fully exhaust max
+        return 2*(sum - max) + 1;
     }
+
 };
 /* class Solution { */
 /* public: */
