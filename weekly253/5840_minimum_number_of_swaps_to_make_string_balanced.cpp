@@ -15,32 +15,23 @@
 // for 1 or 2 we can fix in 1 swap, 3 or 4 we can fix in 2 swaps, 5 or 6 we can fix in 3 swaps, etc
 //
 //
-
+#include <cmath>
 class Solution {
 public:
     int minSwaps(string& s) {
-        bool negative_run = false;
-        int total_count = 0;
         int count = 0;
-        int run = 0;
         for (char c : s) {
             if (c == '[') {
                 count++;
-                negative_run = false;
-                total_count += run;
-                run = 0;
             }
-            else {
+            // only decrement count when we are closing a valid pari
+            else if (count > 0) {
                 count--;
             }
-            if (count < 0) {
-                negative_run = true;
-                run++;
-            }
         }
+        // now count stores the number of left ['s that came after their corresponding ]'s
+        // so we can follow the above pattern
 
-        return total_count / 2;
-
-        
+        return (count % 2 ==0) ? count / 2: count / 2+1;
     }
 };
