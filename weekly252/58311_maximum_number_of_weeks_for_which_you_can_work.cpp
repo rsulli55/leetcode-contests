@@ -19,6 +19,18 @@
 // we may make a schedule such that w_n+1 =/= w_n+1*, but we can just swap these two projects
 // in the end tail of the schedule and still obtain an optimal sequence
 //
+// in a perfect case, the amount of weeks would just be the sum of all milestones
+// this case can fail if there are "gaps" between the two maximal number of milestone projects and the rest.
+// (as long as there are two projects with equal number of milestones, we can "ping-pong" between them so exhaust
+// all milestones)
+// if we stored the sorted milestones in `sorted` then the total number of weeks would be
+// then we can exhaust all milestones in the range (2:end) and we for the maximal two milestone projects
+// we can exhaust 2*sorted(1) milestones.  In other words, the total number of weeks is
+// total = Sum(sorted(2:end)) + 2*sorted(1)
+// however, we would not like to sort this as this would cost O(n logn), so we can rewrite this as
+// total = sum(milestones) - max(milestones) + 2*second_max(milestones)
+// using this equation, we can solve in O(n) time
+// 
 
 #include <algorithm>
 #include <functional>
@@ -27,56 +39,64 @@
 class Solution {
 public:
     long long numberOfWeeks(vector<int>& milestones) {
-        // sort it
-        std::sort(std::begin(milestones), std::end(milestones), std::greater<int>());
-
-        bool can_proceed = true;
-        long long num_weeks = 0;
-        // project from the last week
-        long last_proj = -1;
-        long pointer = 0;
-        
-
-        while (can_proceed) {
-            // if pointer and pointer+1 have the same value, move pointer all the way to the right
-            // which still has that value
-            while (pointer+1 < milestones.size() && milestones[pointer+1] == milestones[pointer]) {
-                    pointer++;
-            }
-            // everything to the left of pointer if equal
-            if (pointer != last_proj && milestones[pointer] > 0) {
-            // then we can use pointer as this weeks project
-                /* std::cout << "Using project: " << pointer << " with milestones: " << milestones[pointer] << '\n'; */
-                milestones[pointer]--;
-                last_proj = pointer;
-                pointer = std::max(pointer -1, 0l);
-                num_weeks++;
-            }
-            // check if there are non zero values to the right
-            else if (pointer+1 < milestones.size() && milestones[pointer+1] > 0) {
-                pointer++;
-            // continue all the way to the right again
-                while (pointer+1 < milestones.size() && milestones[pointer+1] == milestones[pointer]) {
-                        pointer++;
-                }
-            // we didn't use the leftmost pointer, so we should reset pointer all the way to the left
-                /* std::cout << "Using project: " << pointer << " with milestones: " << milestones[pointer] << '\n'; */
-                milestones[pointer]--;
-                last_proj = pointer;
-                num_weeks++;
-                pointer = 0;
-            }
-            // otherwise there was nothing valid to take
-            else {
-                can_proceed = false;
-            }
-        }
-
-        return num_weeks;
+// TODO: new solution
 
         
     }
 };
+/* class Solution { */
+/* public: */
+/*     long long numberOfWeeks(vector<int>& milestones) { */
+/*         // sort it */
+/*         std::sort(std::begin(milestones), std::end(milestones), std::greater<int>()); */
+
+/*         bool can_proceed = true; */
+/*         long long num_weeks = 0; */
+/*         // project from the last week */
+/*         long last_proj = -1; */
+/*         long pointer = 0; */
+        
+
+/*         while (can_proceed) { */
+/*             // if pointer and pointer+1 have the same value, move pointer all the way to the right */
+/*             // which still has that value */
+/*             while (pointer+1 < milestones.size() && milestones[pointer+1] == milestones[pointer]) { */
+/*                     pointer++; */
+/*             } */
+/*             // everything to the left of pointer if equal */
+/*             if (pointer != last_proj && milestones[pointer] > 0) { */
+/*             // then we can use pointer as this weeks project */
+/*                 /1* std::cout << "Using project: " << pointer << " with milestones: " << milestones[pointer] << '\n'; *1/ */
+/*                 milestones[pointer]--; */
+/*                 last_proj = pointer; */
+/*                 pointer = std::max(pointer -1, 0l); */
+/*                 num_weeks++; */
+/*             } */
+/*             // check if there are non zero values to the right */
+/*             else if (pointer+1 < milestones.size() && milestones[pointer+1] > 0) { */
+/*                 pointer++; */
+/*             // continue all the way to the right again */
+/*                 while (pointer+1 < milestones.size() && milestones[pointer+1] == milestones[pointer]) { */
+/*                         pointer++; */
+/*                 } */
+/*             // we didn't use the leftmost pointer, so we should reset pointer all the way to the left */
+/*                 /1* std::cout << "Using project: " << pointer << " with milestones: " << milestones[pointer] << '\n'; *1/ */
+/*                 milestones[pointer]--; */
+/*                 last_proj = pointer; */
+/*                 num_weeks++; */
+/*                 pointer = 0; */
+/*             } */
+/*             // otherwise there was nothing valid to take */
+/*             else { */
+/*                 can_proceed = false; */
+/*             } */
+/*         } */
+
+/*         return num_weeks; */
+
+        
+/*     } */
+/* }; */
 // this solution was too slow
 /* class Solution { */
 /* public: */
